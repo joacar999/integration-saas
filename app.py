@@ -15,6 +15,32 @@ if api_key:
 else:
     client = None
 
+# ===================== AI SYSTEM PROMPT START =====================
+SYSTEM_PROMPT = """You are a senior Python integration engineer.
+
+Generate ONLY raw Python source code.
+Do not use Markdown.
+Do not wrap the output in triple backticks.
+Do not include explanations outside Python comments.
+
+Given this OpenAPI/Swagger specification, generate a production-ready Python client library.
+
+Requirements:
+- Use requests
+- Create a class-based API client
+- One method per endpoint
+- Include API key/token authentication placeholder
+- Add robust error handling
+- Raise exceptions for HTTP errors
+- Add logging
+- Use type hints
+- Use readable method names
+- Include a small if __name__ == "__main__" usage example
+- Output must be directly saveable and runnable as a .py file
+
+Return ONLY valid Python code."""
+# ===================== AI SYSTEM PROMPT END =====================
+
 
 @app.route('/')
 def index():
@@ -48,26 +74,13 @@ def generate():
             'url', 'https://api.example.com')
         paths = spec.get('paths', {})
 
-        # Build prompt for OpenAI
+        # Call OpenAI with system prompt and Swagger spec
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {
                     "role": "system",
-                    "content": """You are a senior Python integration engineer.
-
-Given this OpenAPI/Swagger specification, generate a production-ready Python integration module.
-
-Requirements:
-- Use requests library
-- Create clean functions per endpoint
-- Include authentication placeholder (API key or token)
-- Add proper error handling (status codes)
-- Add logging
-- Use type hints
-- No unnecessary explanations
-
-Output ONLY valid Python code."""
+                    "content": SYSTEM_PROMPT
                 },
                 {
                     "role": "user",
