@@ -85,6 +85,11 @@ def generate():
         base_url = spec.get("servers", [{}])[0].get("url", "https://api.example.com")
         paths = spec.get("paths", {})
 
+        # Limit size to avoid token overflow
+        paths = dict(list(paths.items())[:5])
+        spec["paths"] = paths
+        limited_swagger_spec = json.dumps(spec, indent=2)
+
         # Call OpenAI with system prompt and Swagger spec
         response = client.chat.completions.create(
             model="gpt-4o",
@@ -93,13 +98,13 @@ def generate():
                 {
                     "role": "user",
                     "content": f"""Here is the OpenAPI spec:
-                    {swagger_spec}
+                    {limited_swagger_spec}
                     IMPORTANT:
                     Carefully read the specification.
                     Extract exact endpoint paths and parameters.
                     Do not guess or simplify anything.
                     Use the specification exactly as provided.
-                """,
+                    """,
                 },
             ],
             temperature=0.3,
