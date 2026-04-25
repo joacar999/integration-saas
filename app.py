@@ -82,14 +82,18 @@ def generate():
 
         # Extract key info
         title = spec.get("info", {}).get("title", "API")
-        base_url = spec.get("servers", [{}])[0].get("url", "https://api.example.com")
         paths = spec.get("paths", {})
 
         # Limit size to avoid token overflow
         paths = dict(list(paths.items())[:5])
-        spec["paths"] = paths
-        limited_swagger_spec = json.dumps(spec, indent=2)
+        limited_spec = {
+            "openapi": spec.get("openapi"),
+            "info": spec.get("info", {}),
+            "servers": spec.get("servers", []),
+            "paths": paths,
+        }
 
+        limited_swagger_spec = json.dumps(limited_spec, indent=2)
         # Call OpenAI with system prompt and Swagger spec
         response = client.chat.completions.create(
             model="gpt-4o",
