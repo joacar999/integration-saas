@@ -1,0 +1,95 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Weather API",
+        "version": "1.0.0",
+        "description": "Simple weather API for testing"
+    },
+    "servers": [
+        {
+            "url": "https://api.openweathermap.org",
+            "description": "Production server"
+        }
+    ],
+    "paths": {
+        "/weather/current": {
+            "get": {
+                "summary": "Get current weather",
+                "parameters": [
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Weather data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "temperature": {
+                                            "type": "number"
+                                        },
+                                        "condition": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/weather/forecast": {
+            "get": {
+                "summary": "Get weather forecast",
+                "parameters": [
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "days",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 7
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Forecast data"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
