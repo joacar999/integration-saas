@@ -29,7 +29,7 @@ def generate():
             return jsonify({
                 'error': 'OpenAI API key not configured. Please set OPENAI_API_KEY in .env file'
             }), 503
-        
+
         data = request.json
         swagger_spec = data.get('swagger_spec')
 
@@ -49,28 +49,32 @@ def generate():
         paths = spec.get('paths', {})
 
         # Build prompt for OpenAI
-        endpoint_summary = f"API Title: {title}\nBase URL: {base_url}\n\nEndpoints:\n"
-        for path, methods in list(paths.items())[:5]:  # First 5 endpoints
-            endpoint_summary += f"- {path}: {', '.join(methods.keys())}\n"
-
-        prompt = f"""Generate Python integration examples for these API endpoints:
-
-{endpoint_summary}
-
-Provide:
-1. Setup/authentication code
-2. Example requests for each endpoint
-3. Error handling
-
-Code should use the `requests` library."""
-
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o",
             messages=[
-                {"role": "system", "content": "You are a Python API integration expert. Generate practical, working code examples."},
-                {"role": "user", "content": prompt}
+                {
+                    "role": "system",
+                    "content": """You are a senior Python integration engineer.
+
+Given this OpenAPI/Swagger specification, generate a production-ready Python integration module.
+
+Requirements:
+- Use requests library
+- Create clean functions per endpoint
+- Include authentication placeholder (API key or token)
+- Add proper error handling (status codes)
+- Add logging
+- Use type hints
+- No unnecessary explanations
+
+Output ONLY valid Python code."""
+                },
+                {
+                    "role": "user",
+                    "content": f"Here is the OpenAPI spec:\n{swagger_spec}"
+                }
             ],
-            temperature=0.7,
+            temperature=0.3,
             max_tokens=2000
         )
 
