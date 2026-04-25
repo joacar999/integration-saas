@@ -40,6 +40,10 @@ Requirements:
 - Use correct endpoint paths and parameters from the OpenAPI spec
 - Ensure URLs and query parameters match the specification exactly
 - Include request timeout (e.g. timeout=10)
+- Strictly follow the OpenAPI specification
+- Do not invent endpoints or parameters
+- Use the exact paths and parameter names defined in the spec
+- If unsure, prefer correctness over assumptions
 
 Return ONLY valid Python code."""
 # ===================== AI SYSTEM PROMPT END =====================
