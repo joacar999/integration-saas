@@ -49,68 +49,78 @@ Return ONLY valid Python code."""
 # ===================== AI SYSTEM PROMPT END =====================
 
 
-@app.route('/')
+@app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
 
 
-@app.route('/generate', methods=['POST'])
+@app.route("/generate", methods=["POST"])
 def generate():
     try:
         # Check if OpenAI API key is set
         if not client:
-            return jsonify({
-                'error': 'OpenAI API key not configured. Please set OPENAI_API_KEY in .env file'
-            }), 503
+            return (
+                jsonify(
+                    {
+                        "error": "OpenAI API key not configured. Please set OPENAI_API_KEY in .env file"
+                    }
+                ),
+                503,
+            )
 
         data = request.json
-        swagger_spec = data.get('swagger_spec')
+        swagger_spec = data.get("swagger_spec")
 
         if not swagger_spec:
-            return jsonify({'error': 'No Swagger spec provided'}), 400
+            return jsonify({"error": "No Swagger spec provided"}), 400
 
         # Parse Swagger JSON
         try:
             spec = json.loads(swagger_spec)
         except json.JSONDecodeError:
-            return jsonify({'error': 'Invalid JSON'}), 400
+            return jsonify({"error": "Invalid JSON"}), 400
 
         # Extract key info
-        title = spec.get('info', {}).get('title', 'API')
-        base_url = spec.get('servers', [{}])[0].get(
-            'url', 'https://api.example.com')
-        paths = spec.get('paths', {})
+        title = spec.get("info", {}).get("title", "API")
+        base_url = spec.get("servers", [{}])[0].get("url", "https://api.example.com")
+        paths = spec.get("paths", {})
 
         # Call OpenAI with system prompt and Swagger spec
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {
-                    "role": "system",
-                    "content": SYSTEM_PROMPT
-                },
+                {"role": "system", "content": SYSTEM_PROMPT},
                 {
                     "role": "user",
-                    "content": f"Here is the OpenAPI spec:\n{swagger_spec}"
-                }
+                    "content": f"""Here is the OpenAPI spec:
+                    {swagger_spec}
+                    IMPORTANT:
+                    Carefully read the specification.
+                    Extract exact endpoint paths and parameters.
+                    Do not guess or simplify anything.
+                    Use the specification exactly as provided.
+                """,
+                },
             ],
             temperature=0.3,
-            max_tokens=2000
+            max_tokens=2000,
         )
 
         generated_code = response.choices[0].message.content
 
-        return jsonify({
-            'success': True,
-            'generated_code': generated_code,
-            'api_name': title,
-            'endpoints_found': len(paths)
-        })
+        return jsonify(
+            {
+                "success": True,
+                "generated_code": generated_code,
+                "api_name": title,
+                "endpoints_found": len(paths),
+            }
+        )
 
     except Exception as e:
         print(f"Error in /generate: {str(e)}")  # Log for debugging
-        return jsonify({'error': f'Generation error: {str(e)}'}), 500
+        return jsonify({"error": f"Generation error: {str(e)}"}), 500
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True, port=5000)
