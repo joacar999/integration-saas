@@ -85,7 +85,7 @@ def generate():
         paths = spec.get("paths", {})
 
         # Limit size to avoid token overflow
-        paths = dict(list(paths.items())[:5])
+        paths = dict(list(paths.items())[:1])
         limited_spec = {
             "openapi": spec.get("openapi"),
             "info": spec.get("info", {}),
