@@ -37,6 +37,9 @@ Requirements:
 - Use readable method names
 - Include a small if __name__ == "__main__" usage example
 - Output must be directly saveable and runnable as a .py file
+- Use correct endpoint paths and parameters from the OpenAPI spec
+- Ensure URLs and query parameters match the specification exactly
+- Include request timeout (e.g. timeout=10)
 
 Return ONLY valid Python code."""
 # ===================== AI SYSTEM PROMPT END =====================
