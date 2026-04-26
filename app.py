@@ -3,6 +3,7 @@ import json
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 
@@ -76,7 +77,14 @@ def generate():
 
         # Parse Swagger JSON
         try:
-            spec = json.loads(swagger_spec)
+            # If input is a URL, fetch it
+            if swagger_spec.startswith("http"):
+                response = requests.get(swagger_spec)
+                response.raise_for_status()
+                spec = response.json()
+            else:
+                spec = json.loads(swagger_spec)
+
         except json.JSONDecodeError:
             return jsonify({"error": "Invalid JSON"}), 400
 
