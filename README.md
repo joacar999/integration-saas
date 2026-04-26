@@ -206,9 +206,9 @@ Current approach:
 
 ## 📬 Contact
 
-**Concilio Design AB**
-**link www.conciliodesign.se**
-**mail info@conciliodesign.se**
+Concilio Design AB
+link www.conciliodesign.se
+mail info@conciliodesign.se
 
 
 ---
