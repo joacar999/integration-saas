@@ -3,3 +3,4 @@ python-dotenv==1.0.0
 openai==1.14.0
 httpx==0.25.0
 gunicorn
+requests

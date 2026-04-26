@@ -1,4 +1,5 @@
 """Test cases for Flask app"""
+
 from app import app
 import sys
 import os
@@ -11,31 +12,29 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 def test_index_page():
     """Test that index page loads"""
     with app.test_client() as client:
-        response = client.get('/')
+        response = client.get("/")
         assert response.status_code == 200
-        assert b'AI Integration Workflows' in response.data
+        assert b"AI Integration Workflows" in response.data
     print("✓ Index page test PASSED")
 
 
 def test_generate_no_swagger():
     """Test generate endpoint without Swagger spec"""
     with app.test_client() as client:
-        response = client.post('/generate',
-                               json={'swagger_spec': ''})
+        response = client.post("/generate", json={"swagger_spec": ""})
         assert response.status_code == 400
         data = json.loads(response.data)
-        assert 'error' in data
+        assert "error" in data
     print("✓ No Swagger spec test PASSED")
 
 
 def test_generate_invalid_json():
     """Test generate endpoint with invalid JSON"""
     with app.test_client() as client:
-        response = client.post('/generate',
-                               json={'swagger_spec': '{invalid json'})
+        response = client.post("/generate", json={"swagger_spec": "{invalid json"})
         assert response.status_code == 400
         data = json.loads(response.data)
-        assert 'error' in data
+        assert "error" in data
     print("✓ Invalid JSON test PASSED")
 
 
@@ -46,33 +45,30 @@ def test_generate_valid_swagger():
         "info": {"title": "Test API", "version": "1.0"},
         "servers": [{"url": "https://api.example.com"}],
         "paths": {
-            "/users": {
-                "get": {"summary": "Get users"}
-            },
-            "/posts": {
-                "get": {"summary": "Get posts"}
-            }
-        }
+            "/users": {"get": {"summary": "Get users"}},
+            "/posts": {"get": {"summary": "Get posts"}},
+        },
     }
 
     with app.test_client() as client:
-        response = client.post('/generate',
-                               json={'swagger_spec': json.dumps(swagger_spec)})
+        response = client.post(
+            "/generate", json={"swagger_spec": json.dumps(swagger_spec)}
+        )
 
         if response.status_code == 200:
             data = json.loads(response.data)
-            assert data['success'] == True
-            assert 'generated_code' in data
-            assert data['api_name'] == 'Test API'
+            assert data["success"] == True
+            assert "generated_code" in data
+            assert data["api_name"] == "Test API"
             print("✓ Valid Swagger spec test PASSED")
-        elif response.status_code == 400 and b'Invalid JSON' not in response.data:
+        elif response.status_code == 400 and b"Invalid JSON" not in response.data:
             # Might fail due to missing OpenAI API key, that's ok for this test
             print("⚠ Valid Swagger test SKIPPED (likely missing OpenAI API key)")
         else:
             print(f"✗ Valid Swagger test FAILED: {response.status_code}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("\n🧪 Running Flask app tests...\n")
     try:
         test_index_page()

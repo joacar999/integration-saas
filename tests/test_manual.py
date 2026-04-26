@@ -1,4 +1,5 @@
 """Manual integration test - use this to test the full flow"""
+
 import json
 import sys
 import os
@@ -9,7 +10,7 @@ import os
 def load_sample_swagger():
     """Load sample Swagger JSON"""
     current_dir = os.path.dirname(__file__)
-    with open(os.path.join(current_dir, 'sample_swagger.json'), 'r') as f:
+    with open(os.path.join(current_dir, "sample_swagger.json"), "r") as f:
         return f.read()
 
 
@@ -23,7 +24,7 @@ def test_full_flow():
     print(f"  Base URL: {spec['servers'][0]['url']}")
     print(f"  Endpoints: {len(spec['paths'])}")
 
-    for path in spec['paths'].keys():
+    for path in spec["paths"].keys():
         print(f"    - {path}")
 
     print("\n💡 Next steps:")
@@ -34,7 +35,7 @@ def test_full_flow():
     print("  5. Download the generated Python integration code")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("\n🧪 Manual Integration Test\n")
     try:
         test_full_flow()
