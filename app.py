@@ -45,6 +45,21 @@ Requirements:
 - Do not invent endpoints or parameters
 - Use the exact paths and parameter names defined in the spec
 - If unsure, prefer correctness over assumptions
+- Always include the correct full base URL from the OpenAPI servers section
+- Do not use relative base URLs unless the spec only provides relative URLs
+- Include a clearly marked requirements.txt section as Python comments
+- Include a runnable example using a safe GET endpoint when available
+- Prefer GET endpoints for the example because they are safer to test
+- If authentication is required, use a placeholder API key
+
+Output format:
+1. First output the Python client code
+2. At the bottom, include this comment block:
+
+# ===================== requirements.txt =====================
+# requests
+# python-dotenv
+# ============================================================
 
 Return ONLY valid Python code."""
 # ===================== AI SYSTEM PROMPT END =====================
