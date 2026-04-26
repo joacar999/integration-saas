@@ -1,153 +1,234 @@
-# AI Integration Workflows - SaaS MVP
+# Concilio Design – Integration Studio
 
-Transform Swagger/OpenAPI specs into Python integration examples using AI.
+Turn OpenAPI specs into production-ready Python clients in seconds.
 
-## Features
+---
 
-✨ **AI-Powered Code Generation**
-- Upload Swagger/OpenAPI JSON specifications
-- Automatically generate production-ready Python integration code
-- Includes setup, examples, and error handling
+## 🚀 What is this?
 
-🎯 **Key Benefits**
-- Save hours on API integration documentation
-- Consistent, high-quality Python examples
-- Support for any REST API with an OpenAPI spec
+**Integration Studio** is a lightweight SaaS tool that generates Python API clients directly from Swagger/OpenAPI specifications.
 
-## Tech Stack
+Paste a JSON spec → get a ready-to-use `.py` integration module.
 
-- **Backend**: Flask (Python)
-- **AI**: OpenAI GPT-4
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **Database**: (Coming soon)
+---
 
-## Installation
+## ✨ Features
 
-### Prerequisites
-- Python 3.8+
-- OpenAI API key (get one at https://platform.openai.com/api-keys)
+* Generate **production-ready Python clients**
+* One method per endpoint
+* Built-in **error handling and logging**
+* Supports any REST API with OpenAPI/Swagger
+* Download ready-to-run `.py` files
 
-### Setup
+---
 
-1. Clone the repository:
+## 🎯 Why use this?
+
+* Save hours on manual API integration
+* Avoid boilerplate and repetitive coding
+* Get consistent, structured client code
+* Quickly prototype integrations
+
+---
+
+## 🛠 Tech Stack
+
+* **Backend**: Flask (Python)
+* **AI**: OpenAI GPT-4o
+* **Frontend**: HTML, CSS, Vanilla JS
+* **Deployment**: Railway
+
+---
+
+## ⚙️ Installation
+
+### 1. Clone repo
+
 ```bash
 git clone https://github.com/yourusername/ai-integration-saas.git
 cd ai-integration-saas
 ```
 
-2. Create and activate virtual environment:
+---
+
+### 2. Create virtual environment
+
 ```bash
 python -m venv .venv
-.venv\Scripts\activate  # On Windows
+.venv\Scripts\activate   # Windows
 ```
 
-3. Install dependencies:
+---
+
+### 3. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Configure environment:
-```bash
-# Create .env file
-echo OPENAI_API_KEY=your_api_key_here > .env
+---
+
+## 🔐 OpenAI API Key Setup
+
+You need an API key from OpenAI:
+
+👉 https://platform.openai.com/api-keys
+
+### Steps
+
+1. Log in
+2. Click **"Create new secret key"**
+3. Copy the key (shown only once)
+
+---
+
+### 4. Configure environment
+
+Create `.env` file:
+
+```env
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
 ```
 
-5. Run the application:
+---
+
+### 5. Run the app
+
 ```bash
 python app.py
 ```
 
-6. Open browser: http://localhost:5000
-
-## Usage
-
-1. **Paste Swagger/OpenAPI JSON** in the textarea
-2. Click **"✨ Generate Python Examples"**
-3. Wait for AI to generate integration code
-4. **Download** the `.py` file
-5. Use the generated code in your project
-
-## Project Structure
+Open in browser:
 
 ```
-ai-integration-saas/
-├── app.py                 # Flask application
-├── requirements.txt       # Python dependencies
-├── .env                   # Environment variables (not in git)
-├── .gitignore            # Git ignore file
-├── README.md             # This file
-├── templates/
-│   └── index.html        # Web UI
-└── tests/
-    ├── test_app.py       # Flask endpoint tests
-    ├── test_swagger_parser.py  # Swagger parsing tests
-    ├── test_manual.py    # Manual integration test
-    └── sample_swagger.json     # Example Swagger spec
+http://localhost:5000
 ```
-
-## Testing
-
-Run all tests:
-```bash
-python tests/test_app.py
-python tests/test_swagger_parser.py
-```
-
-## API Endpoints
-
-### `GET /`
-Returns the web interface
-
-### `POST /generate`
-Generates Python integration code
-
-**Request:**
-```json
-{
-  "swagger_spec": "{... Swagger JSON ...}"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "generated_code": "import requests\n...",
-  "api_name": "Weather API",
-  "endpoints_found": 2
-}
-```
-
-## Pricing (Future)
-
-- **Free**: 3 generations/month
-- **Pro**: $19/month - 200 generations/month
-- **Enterprise**: $49/month - Unlimited + priority support
-
-## Roadmap
-
-- [ ] Database for saving specs and generations
-- [ ] User authentication + accounts
-- [ ] Stripe payment integration
-- [ ] API rate limiting
-- [ ] Advanced documentation generation
-- [ ] Support for GraphQL
-- [ ] Deploy to production (Heroku/Railway)
-
-## Contributing
-
-Feel free to fork, improve, and submit PRs!
-
-## License
-
-MIT License - see LICENSE file
-
-## Support
-
-For issues, questions, or feature requests: create an issue on GitHub
 
 ---
 
-**Status**: MVP Complete ✅  
-**Last Updated**: April 2026  
-**Version**: 0.1.0
+## 🧪 Usage
+
+1. Paste an **OpenAPI/Swagger JSON**
+2. Click **Generate**
+3. Download generated Python file
+4. Run or integrate into your project
+
+---
+
+## ⚠️ Important Notes
+
+* Only **JSON** OpenAPI specs are supported (not YAML)
+* Large specs are automatically truncated to avoid token limits
+* Generated clients may require minor adjustments depending on API
+
+---
+
+## 🧱 Project Structure
+
+```
+ai-integration-saas/
+├── app.py
+├── requirements.txt
+├── .env
+├── templates/
+│   └── index.html
+├── static/
+│   └── logo.png
+├── tests/
+└── README.md
+```
+
+---
+
+## 🔌 API Endpoints
+
+### `GET /`
+
+Returns UI
+
+### `POST /generate`
+
+**Request**
+
+```json
+{
+  "swagger_spec": "{...json...}"
+}
+```
+
+**Response**
+
+```json
+{
+  "success": true,
+  "generated_code": "...",
+  "api_name": "Example API",
+  "endpoints_found": 5
+}
+```
+
+---
+
+## 🚀 Deployment (Railway)
+
+1. Push to GitHub
+2. Connect repo in Railway
+3. Add environment variable:
+
+```
+OPENAI_API_KEY=sk-xxxx
+```
+
+4. Deploy
+
+---
+
+## 🧠 Roadmap
+
+* [ ] Support YAML specs
+* [ ] Full spec handling (no truncation)
+* [ ] Test suite generation
+* [ ] Multiple output formats (SDK, docs, tests)
+* [ ] User accounts & history
+* [ ] Payment integration
+
+---
+
+## 💰 Monetization (Early Stage)
+
+Current validation approach:
+
+* Manual generation: ~500 SEK per API client
+* Later:
+
+  * Free tier (limited generations)
+  * Pro plan (monthly usage)
+  * Enterprise options
+
+---
+
+## 🤝 Contributing
+
+PRs welcome — especially improvements to:
+
+* Prompt engineering
+* UI/UX
+* API parsing
+* Output quality
+
+---
+
+## 📄 License
+
+MIT
+
+---
+
+## 📬 Contact
+
+Concilio Design
+
+---
+
+**Status**: MVP Live
+**Version**: 0.2
