@@ -206,7 +206,10 @@ Current approach:
 
 ## 📬 Contact
 
-**Concilio Design**
+**Concilio Design AB**
+**link www.conciliodesign.se**
+**mail info@conciliodesign.se**
+
 
 ---
 
