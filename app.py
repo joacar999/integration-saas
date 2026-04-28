@@ -108,9 +108,6 @@ def generate():
         title = spec.get("info", {}).get("title", "API")
         paths = spec.get("paths", {})
 
-        # Limit size to avoid token overflow
-        //paths = dict(list(paths.items())[:1])
-        
         # Prefer one safe GET endpoint to make generated examples runnable
         selected_paths = {}
 
@@ -125,7 +122,7 @@ def generate():
             selected_paths = dict(list(paths.items())[:1])
 
         paths = selected_paths
-        ///////////////////////////////////////
+
         limited_spec = {
             "openapi": spec.get("openapi"),
             "info": spec.get("info", {}),
