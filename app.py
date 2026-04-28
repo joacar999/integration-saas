@@ -51,6 +51,7 @@ Requirements:
 - Include a runnable example using a safe GET endpoint when available
 - Prefer GET endpoints for the example because they are safer to test
 - If authentication is required, use a placeholder API key
+- Include a comment showing exactly how to install dependencies, e.g.: pip install requests python-dotenv
 
 Output format:
 1. First output the Python client code
@@ -108,7 +109,23 @@ def generate():
         paths = spec.get("paths", {})
 
         # Limit size to avoid token overflow
-        paths = dict(list(paths.items())[:1])
+        //paths = dict(list(paths.items())[:1])
+        
+        # Prefer one safe GET endpoint to make generated examples runnable
+        selected_paths = {}
+
+        for path, methods in paths.items():
+            get_method = methods.get("get")
+            if get_method:
+                selected_paths[path] = {"get": get_method}
+                break
+
+        # Fallback: if no GET endpoint exists, use first endpoint
+        if not selected_paths:
+            selected_paths = dict(list(paths.items())[:1])
+
+        paths = selected_paths
+        ///////////////////////////////////////
         limited_spec = {
             "openapi": spec.get("openapi"),
             "info": spec.get("info", {}),
@@ -131,6 +148,10 @@ def generate():
                     Extract exact endpoint paths and parameters.
                     Do not guess or simplify anything.
                     Use the specification exactly as provided.
+                    Prefer the HTTPS server URL from the "servers" section.
+                    Do not use legacy or alternative hostnames.
+                    Do not add Authorization headers unless security requirements are explicitly defined in the spec.
+                    Use a GET endpoint in the runnable example if one exists.
                     """,
                 },
             ],
