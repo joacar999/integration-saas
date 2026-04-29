@@ -4,6 +4,7 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 import requests
+import yaml
 
 load_dotenv()
 
@@ -66,6 +67,22 @@ Return ONLY valid Python code."""
 # ===================== AI SYSTEM PROMPT END =====================
 
 
+def extract_server_url(spec: dict, selected_paths: dict) -> str:
+    # 1. Prefer top-level servers
+    top_level_servers = spec.get("servers", [])
+    if top_level_servers:
+        return top_level_servers[0].get("url", "")
+
+    # 2. Fall back to path-level servers
+    for path in selected_paths:
+        path_item = spec.get("paths", {}).get(path, {})
+        path_servers = path_item.get("servers", [])
+        if path_servers:
+            return path_servers[0].get("url", "")
+
+    return ""
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -91,18 +108,28 @@ def generate():
         if not swagger_spec:
             return jsonify({"error": "No Swagger spec provided"}), 400
 
-        # Parse Swagger JSON
+        # Parse OpenAPI/Swagger input as JSON or YAML
         try:
-            # If input is a URL, fetch it
             if swagger_spec.startswith("http"):
-                response = requests.get(swagger_spec)
+                response = requests.get(swagger_spec, timeout=10)
                 response.raise_for_status()
-                spec = response.json()
+                raw_spec = response.text
             else:
-                spec = json.loads(swagger_spec)
+                raw_spec = swagger_spec
 
-        except json.JSONDecodeError:
-            return jsonify({"error": "Invalid JSON"}), 400
+            try:
+                spec = json.loads(raw_spec)
+            except json.JSONDecodeError:
+                spec = yaml.safe_load(raw_spec)
+
+            if not isinstance(spec, dict):
+                return jsonify({"error": "Invalid OpenAPI/Swagger spec"}), 400
+
+        except Exception as e:
+            return (
+                jsonify({"error": f"Could not parse OpenAPI/Swagger spec: {str(e)}"}),
+                400,
+            )
 
         # Extract key info
         title = spec.get("info", {}).get("title", "API")
@@ -122,11 +149,12 @@ def generate():
             selected_paths = dict(list(paths.items())[:1])
 
         paths = selected_paths
+        server_url = extract_server_url(spec, paths)
 
         limited_spec = {
             "openapi": spec.get("openapi"),
             "info": spec.get("info", {}),
-            "servers": spec.get("servers", []),
+            "servers": [{"url": server_url}],
             "paths": paths,
         }
 
@@ -140,13 +168,17 @@ def generate():
                     "role": "user",
                     "content": f"""Here is the OpenAPI spec:
                     {limited_swagger_spec}
+
+                    The exact base URL to use is:
+                    {server_url}
+
                     IMPORTANT:
                     Carefully read the specification.
                     Extract exact endpoint paths and parameters.
                     Do not guess or simplify anything.
                     Use the specification exactly as provided.
-                    Prefer the HTTPS server URL from the "servers" section.
-                    Do not use legacy or alternative hostnames.
+                    You MUST use the exact base URL shown above.
+                    Do not replace it, shorten it, infer another hostname, or use documentation hostnames.
                     Do not add Authorization headers unless security requirements are explicitly defined in the spec.
                     Use a GET endpoint in the runnable example if one exists.
                     """,
